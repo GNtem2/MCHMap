@@ -9,7 +9,7 @@ ED attendance for Respiratory disorders in children (age 0-14). The map is avail
 
 ED attendance for Circulatory disorders in children (age 0-14).The map is available [![here](./MCH_Circ.png)](./MCH_Circ.html)
 
-ED attendance for Injury/Poisoning in children (age 0-14).The map is available [![here](./MCH_Injury.png)](./MCH_Injury.html)
+ED attendance for Injury/Poisoning in children (age 0-14).The map is available [![here](./MCH_injury.png)](./MCH_injury.html)
 
 Prevalence of Disability in children (age 0-14).The map is available [![here](./MCH_disability.png)](./MCH_disability.html)
 
