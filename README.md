@@ -11,6 +11,6 @@ ED attendance for Circulatory disorders in children (age 0-14).The map is availa
 
 ED attendance for Injury/Poisoning in children (age 0-14).The map is available [![here](./MCH_Injury.png)](./MCH_Injury.html)
 
-Prevalence of Disability in children (age 0-14).The map is available [![here](./MCH_Dis.png)](./MCH_Dis.html)
+Prevalence of Disability in children (age 0-14).The map is available [![here](./MCH_disability.png)](./MCH_disability.html)
 
 Prevalence of Vulnerable children (age 0-14). The term vulnerable refers to Children developmentally vulnerable on one or more domains. These children were assessed in their Australian Early Development Census (AEDC) first year at school. The map is available [![here](./MCH_AEDC.png)](./MCH_AEDC.html)
