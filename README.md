@@ -11,7 +11,7 @@ ED attendance for Circulatory disorders in children (age 0-14).The map is availa
 
 ED attendance for Injury/Poisoning in children (age 0-14).The map is available below [![here](./MCH_injury2.png)](./MCH_injury.html)
 
-Preventable admissions in children (age 0-14). The map is available below [![here](./MCH_PD.png)](./MCH_PD2.html)
+Preventable admissions in children (age 0-14). The map is available below [![here](./MCH_PD2.png)](./MCH_PD.html)
 
 Prevalence of Disability in children (age 0-14).The map is available below [![here](./MCH_disability2.png)](./MCH_disability.html)
 
