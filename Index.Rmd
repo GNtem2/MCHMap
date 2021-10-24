@@ -191,7 +191,7 @@ library(DT)
 DF<-data.frame(Disorder=c("ED Attendance Mental Health","ED Attendance Circulatory Disorders", "ED Attendance Respiratory Disorders","ED Attendance Injury/Poisoning", "Admissions for preventable conditions", "Disability", "Socioeconomic Disadvantage", "developmentally vulnerable on one or more domains - AEDC"),MCH=c(Mental_MCH,Circ_MCH,Resp_MCH,Injury_MCH, PD_MCH, Dis_MCH, IRSD_MCH,Vuln_MCH),`MCH Children 0-14` = c(MCH_0_14,MCH_0_14,MCH_0_14,MCH_0_14,MCH_0_14,MCH_0_14,NA, MCH_0_14),RCH=c(Mental_RCH,Circ_RCH, PD_RCH, Resp_RCH, Injury_RCH, Dis_RCH, IRSD_RCH, Vuln_RCH), `RCH Children 0-14` = c(RCH_0_14,RCH_0_14,RCH_0_14,RCH_0_14,RCH_0_14,RCH_0_14,NA, RCH_0_14))
 
 #enable extensions in data.table
-DT_DF<-datatable(DF,extensions = c('Buttons','KeyTable'),
+DT_DF<-datatable(DF,extensions = c('Buttons','KeyTable','Responsive'),
 options = list(dom='Bfrtip', keys=T, button=c('copy', 'csv', 'excel', 'print', 'pdf'))) 
 saveWidget(DT_DF, "DT_DF.html")
 webshot::webshot("DT_DF.html",file="DT_DF.png")
