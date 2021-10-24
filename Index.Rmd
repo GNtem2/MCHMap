@@ -31,7 +31,7 @@ This is a thematic map of the common childhood presentation to emergency departm
 ```{r Data, warning=F,message=F, echo=F,results='hide'}
 
 #Pop 2020
-X<-read_xls("./Data/phidu_child_and_youth_data_lga_aust.xls",sheet = "Age_distribution_Persons", skip = 4) %>% mutate(Total4=as.numeric(Number...3))
+X<-read_xls("./Data/phidu_child_and_youth_data_lga_aust.xls",sheet = "Age_distribution_Persons", skip = 4) %>% mutate(Total4=as.numeric(Number...3),Total5_9=as.numeric(Number...7),Total10_14=as.numeric(Number...11),Total0_14=Total4+Total5_9+Total10_14) %>% select(Code, Total4,Total5_9,Total10_14,Total0_14)
 
 #subset Victoria
 X<-X[c(135:215),]
@@ -69,6 +69,15 @@ XED<-XED[c(135:215),]
 #merge
 XED<-right_join(XED,XDis, by="Code")
 
+#Preventable admission
+XPD<-read_xls("./Data/phidu_child_and_youth_data_lga_aust.xls",sheet = "Admissions_prevent_diag_total", skip=4) %>% mutate(PreDiag=round(as.numeric(`Number...4`)))%>% select(Code,PreDiag)
+
+XPD<-XPD[c(135:215),]
+
+#merge
+XED<-right_join(XED, XPD, by="Code")
+
+
 #LGA
 LGAsh<-st_read("./Data/LGA_2016_AUST.shp")
   
@@ -95,6 +104,10 @@ LGAshX$Vuln<-ifelse(is.na(LGAshX$PerVuln),0,LGAshX$PerVuln)
 LGAshX$ED_Mental<-ifelse(is.na(LGAshX$ED_Mental),0,LGAshX$ED_Mental)
 LGAshX$ED_Circ<-ifelse(is.na(LGAshX$ED_Circ),0,LGAshX$ED_Circ)
 LGAshX$ED_Resp<-ifelse(is.na(LGAshX$ED_Resp),0,LGAshX$ED_Resp)
+LGAshX$IRSD<-ifelse(is.na(LGAshX$IRSD),0,LGAshX$IRSD)
+LGAshX$Vuln<-ifelse(is.na(LGAshX$Vuln),0,LGAshX$Vuln)
+LGAshX$Dis_14<-ifelse(is.na(LGAshX$Dis_14),0,LGAshX$Dis_14)
+LGAshX$PreDiag<-ifelse(is.na(LGAshX$PreDiag),0,LGAshX$PreDiag)
 
 #map Victoria
 #m<-mapview(LGAshX["ED_Mental"],layer.name="ED Attendance Mental Health")+
@@ -151,7 +164,7 @@ LGAChildren <- filter(LGAshX,
         select(-starts_with("LGA_"))
 
 L<-mapview::mapview (LGAChildren["MCHcatchment"], layer.name="Hospital Catchment",zoom=12)+mapview(ChildrenHosp["query"],layer.name="Hospital", legend=F)
-mapshot(L,file="ChildrenHospital.png")
+mapshot(L,url = paste0(getwd(), "/ChildrenHospital.html"),file="ChildrenHospital.png")
 
 
 #Vulnerable children
@@ -169,13 +182,19 @@ IRSD_MCH<-round(sum(LGAChildren$IRSD*LGAChildren$MCHcatchment, na.rm = T),0)
 IRSD_RCH<-round(sum(LGAChildren$IRSD*LGAChildren$RCHcatchment, na.rm = T),0)
 Vuln_MCH<-round(sum(LGAChildren$Vuln*LGAChildren$MCHcatchment, na.rm=T ),0)
 Vuln_RCH<-round(sum(LGAChildren$Vuln*LGAChildren$RCHcatchment, na.rm = T),0)
+PD_MCH<-round(sum(LGAChildren$PreDiag*LGAChildren$MCHcatchment, na.rm=T ),0)
+PD_RCH<-round(sum(LGAChildren$PreDiag*LGAChildren$RCHcatchment, na.rm = T),0)
+MCH_0_14<-round(sum(LGAChildren$Total0_14*LGAChildren$MCHcatchment, na.rm = T),0)
+RCH_0_14<-round(sum(LGAChildren$Total0_14*LGAChildren$RCHcatchment, na.rm = T),0)
 
 library(DT)
-DF<-data.frame(Disorder=c("ED Attendance Mental Health","ED Attendance Circulatory Disorders", "ED Attendance Respiratory Disorders","ED Attendance Injury/Poisoning", "Disability", "Socioeconomic Disadvantage", "developmentally vulnerable on one or more domains - AEDC"),MCH=c(Mental_MCH,Circ_MCH,Resp_MCH,Injury_MCH, Dis_MCH, IRSD_MCH,Vuln_MCH),RCH=c(Mental_RCH,Circ_RCH,Resp_RCH, Injury_RCH, Dis_RCH, IRSD_RCH, Vuln_RCH))
+DF<-data.frame(Disorder=c("ED Attendance Mental Health","ED Attendance Circulatory Disorders", "ED Attendance Respiratory Disorders","ED Attendance Injury/Poisoning", "Admissions for preventable conditions", "Disability", "Socioeconomic Disadvantage", "developmentally vulnerable on one or more domains - AEDC"),MCH=c(Mental_MCH,Circ_MCH,Resp_MCH,Injury_MCH, PD_MCH, Dis_MCH, IRSD_MCH,Vuln_MCH),`MCH Children 0-14` = c(MCH_0_14,MCH_0_14,MCH_0_14,MCH_0_14,MCH_0_14,MCH_0_14,NA, MCH_0_14),RCH=c(Mental_RCH,Circ_RCH, PD_RCH, Resp_RCH, Injury_RCH, Dis_RCH, IRSD_RCH, Vuln_RCH), `RCH Children 0-14` = c(RCH_0_14,RCH_0_14,RCH_0_14,RCH_0_14,RCH_0_14,RCH_0_14,NA, RCH_0_14))
 
-DT_DF<-datatable(DF,extensions = 'Buttons',
-options = list(dom='Bfrtip',buttons=c('copy', 'csv', 'excel', 'print', 'pdf')))
-htmltools::save_html(DT_DF, file="DT_DF.html")
+#enable extensions in data.table
+DT_DF<-datatable(DF,extensions = c('Buttons','KeyTable','Responsive'),
+options = list(dom='Bfrtip', keys=T, button=c('copy', 'csv', 'excel', 'print', 'pdf'))) 
+saveWidget(DT_DF, "DT_DF.html")
+webshot::webshot("DT_DF.html",file="DT_DF.png")
 
 DT_DF
 #map Victoria
@@ -193,39 +212,92 @@ ED attendance for mental health issues in children (age 0-14).
 
 ```{r Mental, warning=F,echo=F,message=F}
 n1<-mapview(LGAChildren["ED_Mental"],layer.name="ED Attendance Mental Health",col.regions=c("blue","green","red"))+mapview(ChildrenHosp["query"],layer.name="Hospital",legend=F)
-#mapshot(n, url = paste0(getwd(), "/MCH_Mental.html"))
-n1
+#mapshot(n1, url = paste0(getwd(), "/MCH_Mental.html"),file="MCH_Mental.png")
+#n1
+```
+
+ED attendance for injury/poisoning issues in children (age 0-14).
+
+```{r Injury, warning=F,echo=F,message=F}
+n2<-mapview(LGAChildren["ED_Injury"],layer.name="ED Attendance Injury/Poisoning",col.regions=c("blue","green","red"))+mapview(ChildrenHosp["query"],layer.name="Hospital",legend=F)
+mapshot(n2, url = paste0(getwd(), "/MCH_injury.html"),file="MCH_injury.png")
+#n1
 ```
 
 ED attendance for Respiratory disorders in children (age 0-14).
 
 ```{r Resp, warning=F,echo=F,message=F}
 n3<-mapview(LGAChildren["ED_Resp"],layer.name="ED Attendance Respiratory Disorders",col.regions=c("blue","green","red"))+mapview(ChildrenHosp["query"],layer.name="Hospital",legend=F)
-#mapshot(n, url = paste0(getwd(), "/MCH_Mental.html"))
-n3
+mapshot(n3, url = paste0(getwd(), "/MCH_Resp.html"),file="MCH_Resp.png")
+
 ```
 
+ED attendance for Circulatory disorders in children (age 0-14).
 
+```{r, Circ, warning=F,echo=F,message=F}
+n4<-mapview(LGAChildren["ED_Circ"],layer.name="ED Attendance Circulatory Disorders",col.regions=c("blue","green","red"))+mapview(ChildrenHosp["query"],layer.name="Hospital",legend=F)
+mapshot(n4, url = paste0(getwd(), "/MCH_Circ.html"),file="MCH_Circ.png")
+
+```
+
+Preventable admissions in children (age 0-14).
+
+```{r, PD, warning=F,echo=F,message=F}
+n5<-mapview(LGAChildren["PreDiag"],layer.name="Preventable admission conditions",col.regions=c("blue","green","red"))+mapview(ChildrenHosp["query"],layer.name="Hospital",legend=F)
+mapshot(n5, url = paste0(getwd(), "/MCH_PD.html"),file="MCH_PD.png")
+
+```
 
 Prevalence of disability in children (age 0-14).
 
 ```{r Disability, warning=F,echo=F,message=F}
 p<-mapview(LGAChildren["Dis_14"],layer.name="Disability 0-14 year",col.regions=c("blue","green","red"))+mapview(ChildrenHosp["query"],layer.name="Hospital",legend=F)
-#mapshot(p, url = paste0(getwd(), "/MCH_disability.html"),file="MCH_disability.png")
-p
+
+mapshot(p, url = paste0(getwd(), "/MCH_disability.html"),file="MCH_disability.png")
 ```
+
 
 Prevalence of Vulnerable children (age 0-14). The term vulnerable refers to Children developmentally vulnerable on one or more domains. These children were assessed in their Australian Early Development Census (AEDC) first year at school.
 
 ```{r Vulnerable, warning=F,echo=F,message=F}
 q<-mapview(LGAChildren["Vuln"],layer.name="Vulnerable Children AEDC",col.regions=c("blue","green","red"))+mapview(ChildrenHosp["query"],layer.name="Hospital",legend=F)
-#mapshot(q, url = paste0(getwd(), "/MCH_AEDC.html"),file = "MCH_AEDC.png")
-q
-
+mapshot(q, url = paste0(getwd(), "/MCH_AEDC.html"),file = "MCH_AEDC.png")
 ```
 
+```{r resize image, echo=F, warning=F, message=F}
+library(magick)
+a<-image_read("MCH_Mental.png")
+a1<-image_resize(a,"x400")
+image_write(a1,path = "MCH_Mental2.png",format="png")
 
+b<-image_read("MCH_Resp.png")
+b1<-image_resize(b,"x400")
+image_write(a1,path = "MCH_Resp2.png",format="png")
 
+d<-image_read("MCH_Circ.png")
+d1<-image_resize(d,"x400")
+image_write(d1,path = "MCH_Circ2.png",format="png")
+
+e<-image_read("MCH_PD.png")
+e1<-image_resize(e,"x400")
+image_write(e1,path = "MCH_PD2.png",format="png")
+
+f<-image_read("MCH_disability.png")
+f1<-image_resize(f,"x400")
+image_write(f1,path = "MCH_disability2.png",format="png")
+
+g<-image_read("MCH_injury.png")
+g1<-image_resize(g,"x400")
+image_write(g1,path = "MCH_injury2.png",format="png")
+
+h<-image_read("MCH_AEDC.png")
+h1<-image_resize(h,"x400")
+image_write(h1,path = "MCH_AEDC2.png",format="png")
+
+i<-image_read("ChildrenHospital.png")
+i1<-image_resize(i,"x400")
+image_write(i1,path = "ChildrenHospital2.png",format="png")
+```
 
 
 
