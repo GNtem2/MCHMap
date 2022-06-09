@@ -15,4 +15,4 @@ ED Attendance Vulnerable Children|ED Attendance Injury/Poisoning
 
 The term vulnerable refers to Children developmentally vulnerable on one or more domains. These children were assessed in their Australian Early Development Census (AEDC) first year at school. 
 
-<img src= "./MCH_Endo2.png" >[Click here for link to Web page](./MCH_ENDO.html) |
+<img src= "./MCH_Endo2.png" >[Click here for link to Web page](./MCH_ENDO.html)|
