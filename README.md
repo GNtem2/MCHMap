@@ -12,5 +12,6 @@ ED Attendance Preventable Diseases|ED Attendance Disability
 <img src= "./MCH_PD2.png" >[Click here for link to Web page](./MCH_PD.html)|<img src= "./MCH_disability2.png" >[Click here for link to Web page](./MCH_disability.html) 
 ED Attendance Vulnerable Children|ED Attendance Injury/Poisoning
 <img src= "./MCH_AEDC2.png" >[Click here for link to Web page](./MCH_AEDC.html) |<img src= "./MCH_injury2.png" >[Click here for link to Web page](./MCH_injury.html) 
-
+Hospital admissions for Endocrine, Nutritional and Metabolic Disorders
+<img src= "./MCH_Endo2.png" >[Click here for link to Web page](./MCH_Endo.html) 
 The term vulnerable refers to Children developmentally vulnerable on one or more domains. These children were assessed in their Australian Early Development Census (AEDC) first year at school.
